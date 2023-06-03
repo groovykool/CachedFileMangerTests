@@ -5,6 +5,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.Storage.Provider;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,19 +30,18 @@ namespace CachedFileMangerTests
         {
             TB.Text = "";
             EXTB.Text = "";
-            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
-            savePicker.SuggestedStartLocation =
-                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            var savePicker = new FileSavePicker();
+            savePicker.SuggestedStartLocation =PickerLocationId.DocumentsLibrary;
           
             savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".txt" });
            
             savePicker.SuggestedFileName = "New Document";
-            Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
+            StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
                 try
                 {
-                    Windows.Storage.CachedFileManager.DeferUpdates(file);
+                    CachedFileManager.DeferUpdates(file);
                 }
                 catch (Exception ex)
                 {
@@ -47,11 +49,11 @@ namespace CachedFileMangerTests
                     EXTB.Text += ex.InnerException+ "\n";
                 }
 
-                await Windows.Storage.FileIO.WriteTextAsync(file, file.Name);
+                await FileIO.WriteTextAsync(file, file.Name);
                
-                Windows.Storage.Provider.FileUpdateStatus status =
-                    await Windows.Storage.CachedFileManager.CompleteUpdatesAsync(file);
-                if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
+                FileUpdateStatus status =
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                if (status == FileUpdateStatus.Complete)
                 {
                     TB.Text = "File: " + file.Name + " was saved.";
                 }
@@ -70,20 +72,19 @@ namespace CachedFileMangerTests
         {
             TB.Text = "";
             EXTB.Text = "";
-            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
-            savePicker.SuggestedStartLocation =
-                Windows.Storage.Pickers.PickerLocationId.DocumentsLibrary;
+            var savePicker = new FileSavePicker();
+            savePicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
            
             savePicker.FileTypeChoices.Add("Plain Text", new List<string>() { ".txt" });
            
             savePicker.SuggestedFileName = "New Document";
-            Windows.Storage.StorageFile file = await savePicker.PickSaveFileAsync();
+            StorageFile file = await savePicker.PickSaveFileAsync();
             if (file != null)
             {
-                await Windows.Storage.FileIO.WriteTextAsync(file, file.Name);
-                Windows.Storage.Provider.FileUpdateStatus status =
-                    await Windows.Storage.CachedFileManager.CompleteUpdatesAsync(file);
-                if (status == Windows.Storage.Provider.FileUpdateStatus.Complete)
+                await FileIO.WriteTextAsync(file, file.Name);
+                FileUpdateStatus status =
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                if (status == FileUpdateStatus.Complete)
                 {
                     TB.Text = "File: " + file.Name + " was saved.";
                 }
